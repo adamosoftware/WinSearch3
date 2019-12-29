@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinSearch3.WinForms", "WinSearch3.WinForms\WinSearch3.WinForms.csproj", "{739F9B9B-363E-47E9-8D42-7977B53148AE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinSearch3.Library", "WinSearch3.Library\WinSearch3.Library.csproj", "{5694D431-162B-4EB7-AEAC-E40AFA9E72C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{8F7718B1-3405-4361-BB52-006E08A72CBB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{739F9B9B-363E-47E9-8D42-7977B53148AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{739F9B9B-363E-47E9-8D42-7977B53148AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{739F9B9B-363E-47E9-8D42-7977B53148AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5694D431-162B-4EB7-AEAC-E40AFA9E72C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5694D431-162B-4EB7-AEAC-E40AFA9E72C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5694D431-162B-4EB7-AEAC-E40AFA9E72C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5694D431-162B-4EB7-AEAC-E40AFA9E72C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F7718B1-3405-4361-BB52-006E08A72CBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F7718B1-3405-4361-BB52-006E08A72CBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F7718B1-3405-4361-BB52-006E08A72CBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F7718B1-3405-4361-BB52-006E08A72CBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

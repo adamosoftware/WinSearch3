@@ -16,5 +16,10 @@ namespace WinSearch3
         {
             InitializeComponent();
         }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
