@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +14,10 @@ namespace WinSearch3.Library
         public string Extensions { get; set; }
         public string Contents { get; set; }
 
+        public TimeSpan Elapsed { get; private set; }
+        public int FilesSearched { get; private set; }
+        public int FoldersSearched { get; private set; }
+
         public async Task<IEnumerable<string>> ExecuteAsync(IProgress<string> progress =  null)
         {
             var locations = SplitAndTrim(Locations);
@@ -22,6 +27,8 @@ namespace WinSearch3.Library
 
             var results = new List<string>();
 
+            var sw = Stopwatch.StartNew();
+
             foreach (var loc in locations)
             {
                 await Task.Run(() =>
@@ -29,6 +36,9 @@ namespace WinSearch3.Library
                     ExecuteInner(loc, extensions, results, progress);
                 });
             }
+
+            sw.Stop();
+            Elapsed = sw.Elapsed;
 
             return results;
         }
@@ -42,6 +52,7 @@ namespace WinSearch3.Library
                 foreach (var ext in extensions)
                 {
                     var files = TryGetFiles(path, ext);
+                    FilesSearched += files.Count();
                     foreach (var fileName in files)
                     {
                         if (IsMatch(fileName)) results.Add(fileName);
@@ -50,6 +61,7 @@ namespace WinSearch3.Library
             }
 
             var folders = TryGetDirectories(path);
+            FoldersSearched += folders.Count();
             foreach (var subFolder in folders)
             {
                 if (IsFolderSearch() && subFolder.Contains(SearchFolderName()))

@@ -12,7 +12,7 @@ namespace Testing
         {
             var fs = new FileSearch()
             {
-                Locations = @"C:\Users\Adam\SkyDrive",
+                Locations = @"C:\Users\Adam\SkyDrive, C:\Users\Adam",
                 SearchFor = "rel"
             };
 
@@ -25,7 +25,7 @@ namespace Testing
         {
             var fs = new FileSearch()
             {
-                Locations = @"C:\Users\Adam\SkyDrive",
+                Locations = @"C:\Users\Adam\SkyDrive, C:\Users\Adam",
                 SearchFor = "source/"
             };
 
