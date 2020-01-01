@@ -13,11 +13,11 @@ namespace Testing
             var fs = new FileSearch()
             {
                 Locations = @"C:\Users\Adam\SkyDrive, C:\Users\Adam",
-                SearchFor = "rel"
+                SearchFilename = "rel"
             };
 
             var results = fs.ExecuteAsync().Result;
-            Assert.IsTrue(results.All(s => s.Contains(fs.SearchFor)));
+            Assert.IsTrue(results.All(s => s.Contains(fs.SearchFilename)));
         }
 
         [TestMethod]
@@ -26,7 +26,7 @@ namespace Testing
             var fs = new FileSearch()
             {
                 Locations = @"C:\Users\Adam\SkyDrive, C:\Users\Adam",
-                SearchFor = "source/"
+                SearchFilename = "source/"
             };
 
             var results = fs.ExecuteAsync().Result;

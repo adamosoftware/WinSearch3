@@ -10,7 +10,7 @@ namespace WinSearch3.Library
     public class FileSearch
     {
         public string Locations { get; set; }
-        public string SearchFor { get; set; }
+        public string SearchFilename { get; set; }
         public string Extensions { get; set; }
         public string Contents { get; set; }
 
@@ -21,7 +21,7 @@ namespace WinSearch3.Library
         public async Task<IEnumerable<string>> ExecuteAsync(IProgress<string> progress =  null)
         {
             var locations = SplitAndTrim(Locations);
-            var extensions = SplitAndTrim(Extensions);
+            var extensions = ApplyMaskPattern(SplitAndTrim(Extensions));
 
             if (!extensions.Any()) extensions = new string[] { "*" };
 
@@ -31,9 +31,9 @@ namespace WinSearch3.Library
 
             foreach (var loc in locations)
             {
-                await Task.Run(() =>
+                await Task.Run(async () =>
                 {
-                    ExecuteInner(loc, extensions, results, progress);
+                    await ExecuteInner(loc, extensions, results, progress);
                 });
             }
 
@@ -43,7 +43,17 @@ namespace WinSearch3.Library
             return results;
         }
 
-        private void ExecuteInner(string path, IEnumerable<string> extensions, List<string> results, IProgress<string> progress = null)
+        private IEnumerable<string> ApplyMaskPattern(IEnumerable<string> enumerable)
+        {
+            return enumerable.Select(s =>
+            {
+                string result = s;
+                if (!result.StartsWith("*.")) result = "*." + result;
+                return result;
+            });
+        }
+
+        private async Task ExecuteInner(string path, IEnumerable<string> extensions, List<string> results, IProgress<string> progress = null)
         {
             progress?.Report(path);
 
@@ -55,7 +65,7 @@ namespace WinSearch3.Library
                     FilesSearched += files.Count();
                     foreach (var fileName in files)
                     {
-                        if (IsMatch(fileName)) results.Add(fileName);
+                        if (await IsMatchAsync(fileName)) results.Add(fileName);
                     }
                 }
             }
@@ -69,13 +79,13 @@ namespace WinSearch3.Library
                     results.Add(subFolder);
                 }
 
-                ExecuteInner(subFolder, extensions, results, progress);
+                await ExecuteInner(subFolder, extensions, results, progress);
             }
         }
 
         private string SearchFolderName()
         {
-            return (SearchFor.EndsWith("\\") || SearchFor.EndsWith("/")) ? SearchFor.Substring(0, SearchFor.Length - 1) : SearchFor;
+            return (SearchFilename.EndsWith("\\") || SearchFilename.EndsWith("/")) ? SearchFilename.Substring(0, SearchFilename.Length - 1) : SearchFilename;
         }
 
         private bool IsFolderSearch()
@@ -85,12 +95,27 @@ namespace WinSearch3.Library
 
         private bool IsFileSearch()
         {
-            return !SearchFor.EndsWith("\\") && !SearchFor.EndsWith("/");
+            return !SearchFilename.EndsWith("\\") && !SearchFilename.EndsWith("/");
         }
 
-        private bool IsMatch(string fileName)
+        private async Task<bool> IsMatchAsync(string fileName)
         {
-            if (fileName.Contains(SearchFor)) return true;
+            if (fileName.ToLower().Contains(SearchFilename.ToLower())) return true;
+
+            if (!string.IsNullOrEmpty(Contents))
+            {
+                using (var file = File.OpenRead(fileName))
+                {
+                    using (var reader = new StreamReader(file))
+                    {
+                        while (!reader.EndOfStream)
+                        {
+                            string line = await reader.ReadLineAsync();
+                            if (line.Contains(Contents)) return true;
+                        }                        
+                    }
+                }
+            }
 
             return false;
         }
