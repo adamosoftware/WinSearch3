@@ -18,7 +18,7 @@ namespace WinSearch3.Library
         public int FilesSearched { get; private set; }
         public int FoldersSearched { get; private set; }
 
-        public async Task<IEnumerable<string>> ExecuteAsync(IProgress<string> progress =  null)
+        public async Task<ILookup<string, string>> ExecuteAsync(IProgress<string> progress =  null)
         {
             var locations = SplitAndTrim(Locations);
             var extensions = ApplyMaskPattern(SplitAndTrim(Extensions));
@@ -40,7 +40,17 @@ namespace WinSearch3.Library
             sw.Stop();
             Elapsed = sw.Elapsed;
 
-            return results;
+            return results.ToLookup(fileName => GetLocation(fileName, locations), fileName => fileName.Substring(GetLocation(fileName, locations).Length + 1));
+        }
+
+        private string GetLocation(string fileName, IEnumerable<string> locations)
+        {
+            foreach (var location in locations.OrderByDescending(loc => loc.Length))
+            {
+                if (fileName.ToLower().StartsWith(location.ToLower())) return location;
+            }
+
+            throw new Exception($"File name {fileName} location could not be determined from these locations: {string.Join(", ", locations)}");
         }
 
         private IEnumerable<string> ApplyMaskPattern(IEnumerable<string> enumerable)
@@ -100,8 +110,11 @@ namespace WinSearch3.Library
 
         private async Task<bool> IsMatchAsync(string fileName)
         {
-            if (fileName.ToLower().Contains(SearchFilename.ToLower())) return true;
-
+            if (!string.IsNullOrEmpty(SearchFilename))
+            {
+                if (fileName.ToLower().Contains(SearchFilename.ToLower())) return true;
+            }
+            
             if (!string.IsNullOrEmpty(Contents))
             {
                 using (var file = File.OpenRead(fileName))

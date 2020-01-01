@@ -2,6 +2,8 @@
 using JsonSettings.Library;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using WinForms.Library;
 using WinForms.Library.Models;
@@ -51,18 +53,25 @@ namespace WinSearch3
             }
         }
 
-        private void LoadResults(IEnumerable<string> results)
+        private void LoadResults(ILookup<string, string> results)
         {
             try
             {
                 listView1.Items.Clear();
                 listView1.BeginUpdate();
 
-                foreach (var fileName in results)
+                foreach (var location in results)
                 {
-                    var item = new ListViewItem(fileName);
-                    item.ImageKey = FileSystem.AddIcon(imageList1, fileName, FileSystem.IconSize.Small);
-                    listView1.Items.Add(item);
+                    var group = new ListViewGroup(location.Key);
+                    listView1.Groups.Add(group);
+
+                    foreach (var file in results[location.Key])
+                    {
+                        var item = new ListViewItem(file);
+                        item.Group = group;
+                        item.ImageKey = FileSystem.AddIcon(imageList1, file, FileSystem.IconSize.Small);
+                        listView1.Items.Add(item);
+                    }
                 }
             }
             finally
